@@ -44,47 +44,61 @@ class HashTable:
 
 
     def insert(self, key, value):
-        '''
-        Store the value with the given key.
-
-        Hash collisions should be handled with Linked List Chaining.
-
-        Fill this in.
-        '''
-        pass
+        hashed = self._hash_mod(hash(key))
+        if self.storage[hashed]:
+            node = self.storage[hashed]
+            while node.next:
+                node = node.next
+            node.next = LinkedPair(key, value)
+        else:
+            self.storage[hashed] = LinkedPair(key, value)
 
 
 
     def remove(self, key):
-        '''
-        Remove the value stored with the given key.
-
-        Print a warning if the key is not found.
-
-        Fill this in.
-        '''
-        pass
+        hashed = self._hash_mod(hash(key))
+        node = self.storage[hashed]
+        prev = None
+        while node:
+            if node.key == key:
+                if node.next:
+                    if prev:
+                        prev.next = node.next
+                        node = None
+                    else:
+                        node = None
+                else:
+                    node = None
+            else:
+                prev = node
+                node = node.next
+        del node
+        return(None)
 
 
     def retrieve(self, key):
-        '''
-        Retrieve the value stored with the given key.
-
-        Returns None if the key is not found.
-
-        Fill this in.
-        '''
-        pass
+        hashed = self._hash_mod(hash(key))
+        node = self.storage[hashed]
+        while node:
+            if node.key == key:
+                return node.value
+            else:
+                node = node.next
+        return(None)
 
 
     def resize(self):
-        '''
-        Doubles the capacity of the hash table and
-        rehash all key/value pairs.
+        self.capacity *= 2
+        old = self.storage
+        self.storage = [None] * self.capacity
 
-        Fill this in.
-        '''
-        pass
+        for link in old:
+            if link:
+                self.insert(link.key, link.value)
+                link = link.next
+                while link:
+                    self.insert(link.key, link.value)
+                    link = link.next
 
 
 
@@ -115,3 +129,19 @@ if __name__ == "__main__":
     print(ht.retrieve("line_3"))
 
     print("")
+
+
+# test = HashTable(10)
+#
+# test.insert('w', 'what')
+# test.insert('t', 'too')
+# test.insert('s', 'see')
+# test.insert('z', 'zee')
+#
+# test.retrieve('z')
+#
+# test.remove('w')
+#
+# test.resize()
+#
+# test.capacity
