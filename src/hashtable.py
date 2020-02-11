@@ -44,6 +44,9 @@ class HashTable:
 
 
     def insert(self, key, value):
+        if self.retrieve(key):
+            self.remove(key)
+
         hashed = self._hash_mod(hash(key))
         if self.storage[hashed]:
             node = self.storage[hashed]
@@ -61,18 +64,15 @@ class HashTable:
         prev = None
         while node:
             if node.key == key:
-                if node.next:
-                    if prev:
-                        prev.next = node.next
-                        node = None
-                    else:
-                        node = None
-                else:
-                    node = None
+                break
             else:
                 prev = node
                 node = node.next
-        del node
+        if prev:
+            prev.next = node.next
+        else:
+            node = node.next
+            self.storage[hashed] = node
         return(None)
 
 
@@ -131,17 +131,19 @@ if __name__ == "__main__":
     print("")
 
 
-# test = HashTable(10)
-#
-# test.insert('w', 'what')
-# test.insert('t', 'too')
-# test.insert('s', 'see')
-# test.insert('z', 'zee')
-#
-# test.retrieve('z')
-#
-# test.remove('w')
-#
-# test.resize()
-#
-# test.capacity
+test = HashTable(10)
+
+test.insert('w', 'what')
+test.insert('t', 'too')
+test.insert('s', 'see')
+test.insert('z', 'zee')
+
+test.retrieve('z')
+
+test.remove('z')
+test.retrieve('z')
+
+
+test.resize()
+
+test.capacity
